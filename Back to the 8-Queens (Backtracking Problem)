@@ -1,0 +1,111 @@
+//alie
+// free palatine
+// Back to the 8-Queens
+// https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=2026
+
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <string>
+#include <cstring>
+#include <climits>
+#include <iomanip>
+#include <map>
+#include <set>
+#include <vector>
+#include <iterator>
+#include <numeric>
+#include <deque>
+#include <bits/stdc++.h>
+
+//#define int long long
+#define INT int
+#define ll long long
+#define f(i,n) for(int i=0 ;i<n ;i++)
+#define f1(i,n) for(int i=1 ;i<=n ;i++)
+// #define endl "\n"
+#define no "NO\n"
+#define yes "YES\n"
+#define size_(v) ((int)sizeof((v))) // sizeof return undefined
+#define all(vec) ((vec).begin()),((vec).end())
+#define rall(vec) ((vec).rbegin()),((vec).rend())
+// int s= upper_bound(v.begin(),v.end(),r)-v.begin() // the index upper bound for r from vector
+using namespace std ;
+////////////////////////////////////                         for orderd set
+// Header files, namespaces,
+// macros as defined above
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+#define ordered_set tree<pair<int,int>, null_type,less<pair<int,int>>, rb_tree_tag,tree_order_statistics_node_update>
+///////////////////////////////////////////////////////////   to remember    //////////////////////
+// __builtin_popcount()
+// (*pointer).item = ptr->item
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// const int N = 2*10e5 + 5 ;
+
+vector<int> grid(9);
+int play_grid [9][9] ={0};
+int min_dist = INT_MAX;
+vector<vector<int>> validd;
+vector<int> current;
+
+bool valid(int row, int col) {
+    for (int i = 0; i < current.size(); i++) {
+        if (current[i] == row || abs(current[i] - row) == abs( (i+1) - col)) {
+            return false;
+        }
+    }
+    return true;
+}
+void generate(int col){
+    if(col > 8){
+        validd.push_back(current);
+        return ;
+    }
+    for (int row = 1 ; row <=8 ; row ++){
+        if(valid(row,col)){
+            current.push_back(row);
+            generate(col+1);
+            current.pop_back();
+        }
+    }
+}
+
+void solve(){
+    for(auto it: validd){
+        int temp = 0, i =1 ;
+        for( auto it2 : it){
+            if(grid[i++]!=it2)temp++;
+        }
+        min_dist = min(min_dist, temp);
+    }
+}
+int main()
+{
+    ios_base::sync_with_stdio(0) , cin.tie(0) ,cout.tie(0) ;
+    //freopen("second_hands_validation_input.text","r",stdin) ;
+    //freopen("o.text","w",stdout) ;
+    int t = 1 ;
+    // cin>> t ;
+    while(t--){
+        generate(1);
+//        cout << " valid sisze: " << validd.size() << endl;
+//        for(auto it: validd){
+//            for( auto it2 : it){
+//                cout << it2 << " ";
+//            }
+//            cout << endl;
+//        }
+        int case_num = 1;
+        while (cin >> grid[1]) {
+            for (int i = 2; i <= 8; i++) {
+                cin >> grid[i];
+            }
+            min_dist = INT_MAX;
+            solve();
+            cout << "Case " << case_num++ << ": " << min_dist << endl;
+        }
+    }
+    return 0;
+}
