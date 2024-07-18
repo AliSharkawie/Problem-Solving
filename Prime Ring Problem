@@ -1,0 +1,155 @@
+//alie
+// free palatine
+// Prime Ring Problem
+// https://onlinejudge.org/index.php?option=com_onlinejudge&Itemid=8&category=24&page=show_problem&problem=465
+// backtracking
+
+
+#include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <string>
+#include <cstring>
+#include <climits>
+#include <iomanip>
+#include <map>
+#include <set>
+#include <vector>
+#include <iterator>
+#include <numeric>
+#include <deque>
+#include <bits/stdc++.h>
+
+//#define int long long
+#define INT int
+#define ll long long
+#define f(i,n) for(int i=0 ;i<n ;i++)
+#define f1(i,n) for(int i=1 ;i<=n ;i++)
+// #define endl "\n"
+#define no "NO\n"
+#define yes "YES\n"
+#define size_(v) ((int)sizeof((v))) // sizeof return undefined
+#define all(vec) ((vec).begin()),((vec).end())
+#define rall(vec) ((vec).rbegin()),((vec).rend())
+// int s= upper_bound(v.begin(),v.end(),r)-v.begin() // the index upper bound for r from vector
+using namespace std ;
+////////////////////////////////////                         for orderd set
+// Header files, namespaces,
+// macros as defined above
+#include <ext/pb_ds/assoc_container.hpp>
+#include <ext/pb_ds/tree_policy.hpp>
+using namespace __gnu_pbds;
+#define ordered_set tree<pair<int,int>, null_type,less<pair<int,int>>, rb_tree_tag,tree_order_statistics_node_update>
+///////////////////////////////////////////////////////////   to remember    //////////////////////
+// __builtin_popcount()
+// (*pointer).item = ptr->item
+//////////////////////////////////////////////////////////////////////////////////////////////////////
+// const int N = 2*10e5 + 5 ;
+
+bool sieve_prime[40] ;
+bool prime[32];
+vector<int> current;
+vector<int> valid_numbers;
+set<vector<int>> valids;
+int n ;
+bool is_prime(int num){
+    return sieve_prime[num];
+}
+bool valid(int num){
+    if(current.size() < n-1) {
+        if (is_prime(current[current.size() - 1] + num)){
+            return true;
+        }
+    }
+    else if(current.size() == n-1){
+        if(is_prime(current[current.size()-1] + num) && is_prime(current[0] + num)){
+            return true;
+        }
+    }
+    // else //
+    return false;
+}
+void solve(int iteration){
+    // if(check)return;
+    if(iteration>n){
+        // check = 1;
+        valids.insert(current);
+        vector<int> new_current ;
+        new_current.push_back(1);
+        for(int i = current.size() - 1; i>0 ; i--){
+            new_current.push_back(current[i]);
+        }
+        valids.insert(new_current);
+//        for (int i = 0; i < current.size(); ++i) {
+//            cout << current[i] << " ";
+//        }
+//        cout << endl;
+//        cout << current[0] << " ";
+//        for (int i = current.size()-1 ; i >0 ; --i) {
+//            cout << current[i] << " ";
+//        }
+//        cout << endl;
+//        return;
+    }
+    for (int it = 0; it < valid_numbers.size(); it++ ) {
+        int num = valid_numbers[it];
+        int original_num = num ;
+//        cout << " in valid function  loop --- \n";
+        if(num==0)continue;
+        if(valid(num)){
+//            cout << " current size " << current.size() << "\n";
+//            cout << " set size: " << valid_numbers.size() << endl;
+//            cout << " in valid condition loop \n";
+//            cout << " num :  " << num << endl ;
+            current.push_back(num);
+            valid_numbers[it] = 0 ;
+//            cout << " goto next solve : " << iteration +1 << endl ;
+            solve(iteration+1);
+//            cout << " after solve iteration " << iteration+1 << " now in iteration : " << iteration << endl ;
+            current.pop_back();
+            valid_numbers[it] = original_num;
+//            cout << " current size " << current.size() << "\n";
+//            cout << " set size: " << valid_numbers.size() << endl;
+        }
+    }
+}
+
+int main()
+{
+    ios_base::sync_with_stdio(0) , cin.tie(0) ,cout.tie(0) ;
+    //freopen("second_hands_validation_input.text","r",stdin) ;
+    //freopen("o.text","w",stdout) ;
+
+    f1(i,32)sieve_prime[i]= true ; // suppose all is prime
+    for(int i=2 ;i<=32 ;i++){
+        if(!sieve_prime[i]) // if isnt prime
+            continue ;
+        for(int j=i*i ;j<=32 ;j+=i) // make all multiple prime number a nonPrime
+        {
+            sieve_prime[j] = false  ;
+        }
+    }
+    // f(i,32)cout << i << " " << sieve_prime[i] << " \n";
+
+    int t = 1 ;
+    // cin>> t ;
+    while(t--){
+        int case_num = 1;
+        while (cin>>n) {
+            current.clear();
+            current.push_back(1);
+            valid_numbers.clear();
+            valids.clear();
+            for(int i = 2 ; i<= n ; i++)valid_numbers.push_back(i);
+            solve(2);
+            cout << "Case " << case_num++ << ":\n";
+            for (auto it : valids) {
+                for(int j = 0 ; j< it.size() ; j++)
+                    cout << it[j] << " ";
+                cout << "\n";
+            }
+            cout << "\n";
+        }
+    }
+    return 0;
+}
